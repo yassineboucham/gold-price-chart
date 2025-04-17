@@ -1,28 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Gold 18K Price Chart (MAD)</title>
+  <meta charset="UTF-8">
+  <title>Gold Price Chart</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Gold 18K Price Chart - MAD</h1>
-  <canvas id="goldChart" width="400" height="200"></canvas>
+  <h2>Gold Prices in USD</h2>
+  <canvas id="goldChart" width="600" height="400"></canvas>
 
   <script>
-    const labels = JSON.parse('<%- JSON.stringify(history.map(item => item.date)) %>');
-    const data = JSON.parse('<%- JSON.stringify(history.map(item => item.madPrice)) %>');
-
-    new Chart(document.getElementById('goldChart'), {
+    const ctx = document.getElementById('goldChart').getContext('2d');
+    const goldChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels,
+        labels: <%- JSON.stringify(dates) %>,
         datasets: [{
-          label: 'Price (MAD)',
-          data,
+          label: 'Gold Price (USD)',
+          data: <%= JSON.stringify(goldPrices) %>,
           borderColor: 'gold',
           backgroundColor: 'rgba(255, 215, 0, 0.2)',
+          fill: true,
           tension: 0.3
         }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
       }
     });
   </script>
