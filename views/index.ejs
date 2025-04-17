@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gold 18K Price Chart (MAD)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Gold 18K Price Chart - MAD</h1>
+  <canvas id="goldChart" width="400" height="200"></canvas>
+
+  <script>
+    const labels = JSON.parse('<%- JSON.stringify(history.map(item => item.date)) %>');
+    const data = JSON.parse('<%- JSON.stringify(history.map(item => item.madPrice)) %>');
+
+    new Chart(document.getElementById('goldChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Price (MAD)',
+          data,
+          borderColor: 'gold',
+          backgroundColor: 'rgba(255, 215, 0, 0.2)',
+          tension: 0.3
+        }]
+      }
+    });
+  </script>
+</body>
+</html>

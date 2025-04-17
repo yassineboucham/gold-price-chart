@@ -1,0 +1,144 @@
+<!-- File: views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>18K Gold Price Chart (MAD)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .price-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 6px;
+    }
+    .current-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #c9b037;
+    }
+    .updated-time {
+      color: #666;
+      font-size: 14px;
+    }
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    .morocco-flag {
+      width: 30px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .currency-info {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Flag_of_Morocco.svg" alt="Morocco Flag" class="morocco-flag">
+      18K Gold Price Chart (Moroccan Dirhams per gram)
+    </h1>
+    
+    <div class="price-info">
+      <div>
+        <h3>Current Price</h3>
+        <div class="current-price"><%= currentPrice %> MAD/gram</div>
+      </div>
+      <div class="updated-time">
+        Last updated: <%= lastUpdated %>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <canvas id="goldChart"></canvas>
+    </div>
+
+    <div class="currency-info">
+      <strong>Note:</strong> All prices shown are for 18K gold (75% pure gold) in Moroccan Dirhams (MAD).
+    </div>
+  </div>
+
+  <script>
+    // Chart configuration
+    const ctx = document.getElementById('goldChart').getContext('2d');
+    const goldChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: JSON.parse('<%- JSON.stringify(goldData.dates) %>'),
+        datasets: [{
+          label: '18K Gold Price (MAD/gram)',
+          data: JSON.parse('<%- JSON.stringify(goldData.prices) %>'),
+          backgroundColor: 'rgba(201, 176, 55, 0.2)',
+          borderColor: 'rgba(201, 176, 55, 1)',
+          borderWidth: 2,
+          tension: 0.3,
+          pointBackgroundColor: 'rgba(201, 176, 55, 1)',
+          pointBorderColor: '#fff',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Price (MAD per gram)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.raw} MAD`;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
