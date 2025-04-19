@@ -4,20 +4,84 @@
   <meta charset="UTF-8">
   <title>Gold Price Chart</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .period-buttons {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .period-btn {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .period-btn.active {
+      background-color: gold;
+      color: white;
+    }
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    .price-info {
+      text-align: center;
+      margin: 20px 0;
+      padding: 10px;
+      background-color: #f8f8f8;
+      border-radius: 5px;
+    }
+    .current-price {
+      font-size: 24px;
+      font-weight: bold;
+      color: gold;
+    }
+    .last-updated {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
   <h2>Gold Prices in USD</h2>
-  <canvas id="goldChart" width="600" height="400"></canvas>
+  
+  <div class="price-info">
+    <div class="current-price">Current Price: $<%= currentPrice %></div>
+    <div class="last-updated">Last Updated: <%= lastUpdated %></div>
+  </div>
+
+  <div class="period-buttons">
+    <button class="period-btn <%= period === 'day' ? 'active' : '' %>" onclick="changePeriod('day')">Day</button>
+    <button class="period-btn <%= period === 'month' ? 'active' : '' %>" onclick="changePeriod('month')">Month</button>
+    <button class="period-btn <%= period === 'year' ? 'active' : '' %>" onclick="changePeriod('year')">Year</button>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="goldChart"></canvas>
+  </div>
 
   <script>
+    function changePeriod(period) {
+      window.location.href = `/?period=${period}`;
+    }
+
     const ctx = document.getElementById('goldChart').getContext('2d');
     const goldChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: <%- JSON.stringify(dates) %>,
+        labels: JSON.parse('<%- JSON.stringify(dates) %>'),
         datasets: [{
           label: 'Gold Price (USD)',
-          data: <%= JSON.stringify(goldPrices) %>,
+          data: JSON.parse('<%- JSON.stringify(goldPrices) %>'),
           borderColor: 'gold',
           backgroundColor: 'rgba(255, 215, 0, 0.2)',
           fill: true,
@@ -26,9 +90,29 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
-            beginAtZero: false
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Price (USD)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `Price: $${context.parsed.y.toFixed(2)}`;
+              }
+            }
           }
         }
       }
